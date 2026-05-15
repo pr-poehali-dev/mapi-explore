@@ -1,119 +1,84 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
 
-const navLinks = [
-  { label: "Каталог", href: "#catalog" },
-  { label: "О компании", href: "#about" },
-  { label: "Доставка", href: "#delivery" },
-  { label: "Проекты", href: "#projects" },
-  { label: "Контакты", href: "#contacts" },
+const HERO_IMG = "https://cdn.poehali.dev/projects/388a6f38-35fc-41c7-9a06-727bc2150bda/files/2d156b5c-9f83-4c6f-bb99-73185322a8f4.jpg";
+const OFFICE_IMG = "https://cdn.poehali.dev/projects/388a6f38-35fc-41c7-9a06-727bc2150bda/files/bc1268a3-438f-4850-b8be-fbfef44d7484.jpg";
+const BOARD_IMG = "https://cdn.poehali.dev/projects/388a6f38-35fc-41c7-9a06-727bc2150bda/files/a900618b-486c-4ef0-ac42-efcafb8d2711.jpg";
+
+const marqueeItems = [
+  "Кабинеты руководителя", "Рабочие места", "Переговорные комнаты",
+  "Мягкая мебель", "Шкафы и стеллажи", "Кресла и стулья",
+  "Столы для сотрудников", "Ресепшн-стойки", "Зоны ожидания",
+];
+
+const stats = [
+  { num: "15", unit: "лет", label: "на рынке" },
+  { num: "10K+", unit: "", label: "выполненных проектов" },
+  { num: "500+", unit: "", label: "моделей в наличии" },
+  { num: "48ч", unit: "", label: "срочная доставка" },
 ];
 
 const categories = [
-  {
-    icon: "Briefcase",
-    title: "Кабинеты руководителя",
-    desc: "Представительные решения для топ-менеджмента",
-    count: "120+ моделей",
-    color: "bg-[hsl(216,60%,22%)]",
-  },
-  {
-    icon: "Monitor",
-    title: "Рабочие места",
-    desc: "Эргономичные столы и тумбы для сотрудников",
-    count: "200+ моделей",
-    color: "bg-[hsl(216,50%,30%)]",
-  },
-  {
-    icon: "Users",
-    title: "Переговорные комнаты",
-    desc: "Столы и мебель для совещаний",
-    count: "80+ моделей",
-    color: "bg-[hsl(216,45%,38%)]",
-  },
-  {
-    icon: "LayoutGrid",
-    title: "Мягкая мебель",
-    desc: "Диваны, кресла и пуфы для зон отдыха",
-    count: "90+ моделей",
-    color: "bg-[hsl(216,40%,44%)]",
-  },
-  {
-    icon: "Archive",
-    title: "Шкафы и хранение",
-    desc: "Шкафы-купе, стеллажи, тумбы под документы",
-    count: "150+ моделей",
-    color: "bg-[hsl(220,35%,50%)]",
-  },
-  {
-    icon: "Armchair",
-    title: "Кресла и стулья",
-    desc: "Компьютерные, операторские и посетительские",
-    count: "180+ моделей",
-    color: "bg-[hsl(220,30%,55%)]",
-  },
+  { title: "Кабинет\nруководителя", tag: "Премиум", img: HERO_IMG },
+  { title: "Рабочие\nместа", tag: "Популярное", img: OFFICE_IMG },
+  { title: "Переговорные\nкомнаты", tag: "Бизнес", img: BOARD_IMG },
 ];
 
 const advantages = [
   {
-    icon: "BadgeCheck",
-    title: "Собственное производство",
-    desc: "Мебель изготавливается на наших мощностях из сертифицированных материалов",
+    num: "01",
+    title: "Собственное\nпроизводство",
+    desc: "Мебель изготавливается на наших мощностях из сертифицированных материалов ЛДСП, MDF, натурального шпона.",
   },
   {
-    icon: "Truck",
-    title: "Доставка по России",
-    desc: "Доставляем в любой город России. По Москве — бесплатно от 50 000 ₽",
+    num: "02",
+    title: "Размеры\nпод заказ",
+    desc: "Нестандартные габариты, угловые конфигурации, индивидуальные цветовые решения — без доплаты за сложность.",
   },
   {
-    icon: "Ruler",
-    title: "Мебель под размеры",
-    desc: "Изготовим по вашим чертежам — любые нестандартные габариты",
+    num: "03",
+    title: "Доставка\nпо России",
+    desc: "Логистика до любого города. По Москве — сборка и установка включены в стоимость.",
   },
   {
-    icon: "Headphones",
-    title: "Личный менеджер",
-    desc: "Подберём комплектацию, посчитаем смету, возьмём монтаж под ключ",
-  },
-  {
-    icon: "Building2",
-    title: "Шоурум в Москве",
-    desc: "Живой показ 500+ экспонатов на складе-шоуруме в Москве",
-  },
-  {
-    icon: "ShieldCheck",
-    title: "Гарантия 18 месяцев",
-    desc: "Официальная гарантия на всю мебель собственного производства",
+    num: "04",
+    title: "Гарантия\n18 месяцев",
+    desc: "Официальная гарантия на всю продукцию. Сервисное обслуживание и замена при дефектах.",
   },
 ];
 
-const projects = [
-  { label: "Банки и финансы", icon: "Landmark" },
-  { label: "IT-компании", icon: "Code2" },
-  { label: "Медицинские учреждения", icon: "HeartPulse" },
-  { label: "Государственные структуры", icon: "Building" },
-  { label: "Торговые сети", icon: "ShoppingBag" },
-  { label: "Юридические фирмы", icon: "Scale" },
+const process = [
+  { step: "I", title: "Заявка", desc: "Оставляете контакт — менеджер перезванивает за 30 минут" },
+  { step: "II", title: "Проект", desc: "Замер, дизайн-проект, спецификация и смета" },
+  { step: "III", title: "Производство", desc: "Изготовление от 5 рабочих дней с уведомлением о готовности" },
+  { step: "IV", title: "Монтаж", desc: "Доставка, сборка и подключение — сдаём под ключ" },
 ];
 
-const deliverySteps = [
-  { num: "01", title: "Заявка", desc: "Оставляете заявку — менеджер связывается в течение 30 минут" },
-  { num: "02", title: "Замер и смета", desc: "Выезжаем на объект, снимаем размеры, готовим полный расчёт" },
-  { num: "03", title: "Производство", desc: "Изготавливаем мебель в срок от 5 рабочих дней" },
-  { num: "04", title: "Доставка", desc: "Доставляем, собираем и устанавливаем — вы только принимаете результат" },
-];
-
-const contacts = {
-  phones: ["+7 (495) 374-44-81", "+7 (800) 707-33-71"],
-  email: "info@glavoffice.ru",
-  address: "г. Москва, шоурум и склад — свяжитесь для точного адреса",
-  hours: "Пн–Пт: 9:00–19:00 | Сб: 10:00–16:00",
-};
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
 
 export default function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", phone: "", comment: "" });
+  const [form, setForm] = useState({ name: "", phone: "", goal: "" });
   const [sent, setSent] = useState(false);
+
+  const statsSection = useInView();
+  const advSection = useInView();
+  const processSection = useInView();
+  const formSection = useInView();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,542 +86,374 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+    <div className="min-h-screen bg-[#F5F3EF] overflow-x-hidden" style={{ fontFamily: "'Golos Text', sans-serif" }}>
 
-      {/* ── TOP BAR ── */}
-      <div className="bg-navy-dark text-white/80 text-sm py-2 hidden md:block"
-        style={{ backgroundColor: "hsl(216,65%,14%)" }}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <span className="flex items-center gap-2">
-            <Icon name="MapPin" size={14} />
-            Москва и вся Россия — доставка мебели
-          </span>
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2">
-              <Icon name="Clock" size={14} />
-              Пн–Пт 9:00–19:00, Сб 10:00–16:00
-            </span>
-            <a href="tel:+74953744481" className="text-white font-medium hover:text-amber-400 transition-colors">
-              +7 (495) 374-44-81
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* ── HEADER ── */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-          <a href="#" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded flex items-center justify-center"
-              style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-              <Icon name="Building2" size={20} className="text-white" />
+      {/* HEADER */}
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <div className="flex items-center justify-between px-6 md:px-12 h-16"
+          style={{ background: "rgba(245,243,239,0.92)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
+          <a href="#" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-[#1C1915] flex items-center justify-center">
+              <span className="text-[#D4A96A] text-[11px] font-bold" style={{ fontFamily: "'Cormorant', serif" }}>ГО</span>
             </div>
-            <div>
-              <div className="font-montserrat font-800 text-lg leading-none"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, color: "hsl(216,60%,22%)" }}>
-                ГлавОфис
-              </div>
-              <div className="text-xs text-gray-500 leading-none mt-0.5">офисная мебель</div>
-            </div>
+            <span className="text-[#1C1915] font-semibold text-sm tracking-wide uppercase">ГлавОфис</span>
           </a>
 
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((l) => (
-              <a key={l.label} href={l.href}
-                className="text-sm font-medium text-gray-600 hover:text-[hsl(216,60%,22%)] transition-colors relative group">
-                {l.label}
-                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-amber-500 transition-all group-hover:w-full" />
-              </a>
+          <nav className="hidden md:flex items-center gap-10">
+            {[["Каталог", "#catalog"], ["О нас", "#about"], ["Как работаем", "#process"], ["Контакты", "#contact"]].map(([l, h]) => (
+              <a key={l} href={h} className="text-[13px] text-[#1C1915]/55 hover:text-[#1C1915] transition-colors tracking-wide">{l}</a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <a href="tel:+74953744481"
-              className="hidden md:flex items-center gap-2 px-4 py-2 rounded text-white text-sm font-medium transition-all hover:opacity-90"
-              style={{ backgroundColor: "hsl(28,85%,52%)", fontFamily: "'Montserrat', sans-serif" }}>
-              <Icon name="Phone" size={15} />
-              Позвонить
+          <div className="flex items-center gap-4">
+            <a href="tel:+74953744481" className="hidden md:flex items-center gap-2 text-sm text-[#1C1915]/70 font-medium hover:text-[#D4A96A] transition-colors">
+              <Icon name="Phone" size={14} />
+              +7 (495) 374-44-81
             </a>
-            <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)}>
-              <Icon name={menuOpen ? "X" : "Menu"} size={22} className="text-gray-700" />
+            <a href="#contact"
+              className="hidden md:inline-flex px-5 py-2 bg-[#1C1915] text-[#F5F3EF] text-[11px] uppercase tracking-[0.1em] font-medium hover:bg-[#D4A96A] transition-colors">
+              Заявка
+            </a>
+            <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+              <Icon name={menuOpen ? "X" : "Menu"} size={20} className="text-[#1C1915]" />
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
         {menuOpen && (
-          <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 flex flex-col gap-4">
-            {navLinks.map((l) => (
-              <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
-                className="text-base font-medium text-gray-700 py-1"
-                style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                {l.label}
-              </a>
+          <div className="md:hidden bg-[#F5F3EF] border-b border-[#1C1915]/10 px-6 py-5 flex flex-col gap-5">
+            {[["Каталог", "#catalog"], ["О нас", "#about"], ["Как работаем", "#process"], ["Контакты", "#contact"]].map(([l, h]) => (
+              <a key={l} href={h} onClick={() => setMenuOpen(false)} className="text-sm text-[#1C1915]/70 uppercase tracking-wider">{l}</a>
             ))}
-            <a href="tel:+74953744481"
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded text-white font-medium mt-2"
-              style={{ backgroundColor: "hsl(28,85%,52%)" }}>
-              <Icon name="Phone" size={16} />
-              +7 (495) 374-44-81
-            </a>
+            <a href="tel:+74953744481" className="text-[#1C1915] font-semibold">+7 (495) 374-44-81</a>
           </div>
         )}
       </header>
 
-      {/* ── HERO ── */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: "hsl(216,60%,22%)", minHeight: "560px" }}>
-        <div className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 80px)`
-          }} />
-        <div className="absolute right-0 top-0 w-1/2 h-full opacity-20 hidden md:block"
-          style={{
-            background: "radial-gradient(circle at 70% 40%, hsl(28,85%,52%), transparent 60%)"
-          }} />
-
-        <div className="relative max-w-7xl mx-auto px-6 py-20 md:py-28">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 text-amber-400 text-sm font-medium mb-5 bg-white/10 px-3 py-1.5 rounded-full">
-              <Icon name="Star" size={14} />
-              Более 15 лет на рынке офисной мебели
+      {/* HERO */}
+      <section className="relative flex flex-col pt-16">
+        <div className="grid md:grid-cols-2 min-h-[calc(100vh-4rem)]">
+          <div className="flex flex-col justify-center px-8 md:px-16 py-20 md:py-0 order-2 md:order-1">
+            <div className="anim-fadeup anim-delay-1">
+              <span className="inline-block text-[11px] uppercase tracking-[0.2em] text-[#1C1915]/40 mb-8 border-b border-[#1C1915]/15 pb-2">
+                Офисная мебель · Москва и вся Россия
+              </span>
             </div>
-            <h1 className="text-white font-montserrat leading-tight mb-6"
-              style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}>
-              Офисная мебель<br />
-              <span style={{ color: "hsl(35,90%,60%)" }}>для вашего бизнеса</span>
+            <h1 className="anim-fadeup anim-delay-2 leading-[0.9] mb-8"
+              style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "clamp(3rem, 6.5vw, 5.5rem)", color: "#1C1915", letterSpacing: "-0.01em" }}>
+              Мебель,<br />
+              <em style={{ fontStyle: "italic", color: "#D4A96A" }}>достойная</em><br />
+              вашего офиса
             </h1>
-            <p className="text-blue-100 text-lg mb-8 leading-relaxed max-w-lg">
-              Производство и продажа офисной мебели. Кабинеты руководителя, рабочие места, 
-              переговорные комнаты — под ключ с доставкой по всей России.
+            <p className="anim-fadeup anim-delay-3 text-[#1C1915]/50 text-lg leading-relaxed max-w-sm mb-10">
+              Производство и продажа офисной мебели с 2009 года. Собственный завод, индивидуальные решения, доставка по России.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="anim-fadeup anim-delay-4 flex flex-col sm:flex-row gap-4">
               <a href="#catalog"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded font-medium text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: "hsl(28,85%,52%)", fontFamily: "'Montserrat', sans-serif", fontWeight: 600 }}>
-                <Icon name="LayoutGrid" size={18} />
-                Каталог мебели
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#1C1915] text-[#F5F3EF] text-xs uppercase tracking-[0.12em] font-medium hover:bg-[#D4A96A] transition-all duration-300">
+                Смотреть каталог
+                <Icon name="ArrowRight" size={14} className="group-hover:translate-x-1 transition-transform" />
               </a>
-              <a href="#contacts"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded font-medium border border-white/30 text-white transition-all hover:bg-white/10"
-                style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                <Icon name="Phone" size={18} />
-                Получить консультацию
+              <a href="#contact"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-[#1C1915]/25 text-[#1C1915] text-xs uppercase tracking-[0.12em] hover:border-[#D4A96A] hover:text-[#D4A96A] transition-all duration-300">
+                Получить смету
               </a>
             </div>
+          </div>
 
-            <div className="flex flex-wrap gap-8 mt-12">
-              {[
-                { num: "15 лет", label: "на рынке" },
-                { num: "10 000+", label: "выполненных заказов" },
-                { num: "500+", label: "моделей в наличии" },
-              ].map((s) => (
-                <div key={s.label}>
-                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>{s.num}</div>
-                  <div className="text-blue-200 text-sm mt-0.5">{s.label}</div>
-                </div>
-              ))}
+          <div className="relative order-1 md:order-2 h-[55vw] md:h-auto min-h-[300px]">
+            <img src={HERO_IMG} alt="Офис руководителя" className="anim-img absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1C1915]/25 to-transparent" />
+            <div className="absolute bottom-6 left-6 hidden md:block">
+              <div className="inline-flex items-center gap-3 bg-[#F5F3EF]/90 px-4 py-3" style={{ backdropFilter: "blur(8px)" }}>
+                <div className="w-2 h-2 bg-[#D4A96A] rounded-full" />
+                <span className="text-[10px] text-[#1C1915] uppercase tracking-[0.15em]">Кабинет руководителя</span>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Marquee */}
+        <div className="overflow-hidden py-3 bg-[#1C1915]">
+          <div className="animate-marquee">
+            {[...marqueeItems, ...marqueeItems].map((item, i) => (
+              <span key={i} className="flex items-center gap-8 px-8 text-[11px] uppercase tracking-[0.18em] text-[#F5F3EF]/50 whitespace-nowrap">
+                {item}
+                <span className="text-[#D4A96A]">✦</span>
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── CATALOG ── */}
-      <section id="catalog" className="py-20" style={{ backgroundColor: "hsl(210,20%,98%)" }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-12">
-            <div className="w-10 h-1 rounded mb-4" style={{ backgroundColor: "hsl(28,85%,52%)" }} />
-            <h2 className="text-3xl md:text-4xl font-bold mb-3"
-              style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-              Каталог мебели
-            </h2>
-            <p className="text-gray-500 text-lg">Все категории офисной мебели собственного производства</p>
+      {/* STATS */}
+      <section ref={statsSection.ref} className="bg-[#1C1915] py-1">
+        <div className="max-w-6xl mx-auto px-8 md:px-12 pb-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-white/8">
+            {stats.map((s, i) => (
+              <div key={i} className={`px-8 py-10 text-center ${statsSection.inView ? `anim-fadeup anim-delay-${i + 1}` : "opacity-0"}`}>
+                <div className="text-[#D4A96A]" style={{ fontFamily: "'Cormorant', serif", fontSize: "3rem", fontWeight: 700, lineHeight: 1 }}>
+                  {s.num}<span className="text-xl">{s.unit}</span>
+                </div>
+                <div className="text-[#F5F3EF]/35 text-[10px] uppercase tracking-widest mt-3">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CATALOG */}
+      <section id="catalog" className="py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-8 md:px-12">
+          <div className="flex items-end justify-between mb-14">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-[#1C1915]/35 mb-4">Ассортимент</p>
+              <h2 className="leading-none" style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "clamp(2.2rem, 5vw, 3.8rem)", color: "#1C1915" }}>
+                Каталог мебели
+              </h2>
+            </div>
+            <a href="#contact" className="hidden md:flex items-center gap-2 text-xs text-[#1C1915]/40 hover:text-[#D4A96A] transition-colors uppercase tracking-widest">
+              Полный каталог <Icon name="ArrowRight" size={13} />
+            </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {categories.map((cat, i) => (
-              <a key={i} href="#contacts"
-                className="group relative overflow-hidden rounded-xl p-7 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: "linear-gradient(135deg, hsl(216,65%,18%), hsl(216,55%,28%))" }} />
-                <div className="relative z-10">
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"
-                    style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
-                    <Icon name={cat.icon} fallback="Box" size={24} className="text-white" />
-                  </div>
-                  <h3 className="text-white font-semibold text-lg mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              <a key={i} href="#contact" className="group relative overflow-hidden cursor-pointer" style={{ aspectRatio: "3/4" }}>
+                <img src={cat.img} alt={cat.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C1915]/80 via-[#1C1915]/15 to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className="inline-block px-3 py-1 bg-[#D4A96A] text-[#1C1915] text-[10px] uppercase tracking-widest font-semibold">
+                    {cat.tag}
+                  </span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="text-[#F5F3EF] mb-3 whitespace-pre-line"
+                    style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "1.65rem", lineHeight: 1.05 }}>
                     {cat.title}
                   </h3>
-                  <p className="text-blue-200 text-sm mb-4">{cat.desc}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-amber-400 text-sm font-medium">{cat.count}</span>
-                    <Icon name="ArrowRight" size={18} className="text-white/60 group-hover:text-amber-400 transition-colors" />
+                  <div className="flex items-center gap-2 text-[#D4A96A] text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Смотреть коллекцию <Icon name="ArrowRight" size={11} />
                   </div>
                 </div>
               </a>
             ))}
           </div>
 
-          <div className="mt-8 text-center">
-            <a href="#contacts"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded border-2 font-medium transition-all hover:bg-[hsl(216,60%,22%)] hover:text-white"
-              style={{ borderColor: "hsl(216,60%,22%)", color: "hsl(216,60%,22%)", fontFamily: "'Montserrat', sans-serif", fontWeight: 600 }}>
-              Запросить полный каталог
-              <Icon name="ChevronRight" size={18} />
-            </a>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+            {["Мягкая мебель", "Шкафы и хранение", "Кресла и стулья", "Ресепшн"].map((title, i) => (
+              <a key={i} href="#contact"
+                className="group flex items-center justify-between px-5 py-4 border border-[#1C1915]/10 hover:border-[#D4A96A] hover:bg-[#1C1915] transition-all duration-300 cursor-pointer">
+                <span className="text-[#1C1915] group-hover:text-[#F5F3EF] transition-colors"
+                  style={{ fontFamily: "'Cormorant', serif", fontSize: "1.05rem", fontWeight: 500 }}>
+                  {title}
+                </span>
+                <Icon name="ArrowRight" size={13} className="text-[#1C1915]/25 group-hover:text-[#D4A96A] transition-colors" />
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── ADVANTAGES ── */}
-      <section id="about" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      {/* ABOUT / SPLIT */}
+      <section id="about" className="bg-[#1C1915] py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-8 md:px-12">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="w-10 h-1 rounded mb-4" style={{ backgroundColor: "hsl(28,85%,52%)" }} />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4"
-                style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-                Почему выбирают<br />ГлавОфис
+              <p className="text-[11px] uppercase tracking-[0.2em] text-[#F5F3EF]/25 mb-6">О компании</p>
+              <h2 className="text-[#F5F3EF] leading-tight mb-8"
+                style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+                Офис — это<br />
+                инструмент<br />
+                <em style={{ color: "#D4A96A", fontStyle: "italic" }}>вашего роста</em>
               </h2>
-              <p className="text-gray-500 text-base leading-relaxed mb-6">
-                Мы производим и продаём офисную мебель с 2009 года. За это время 
-                оснастили более 10 000 офисов по всей России — от небольших кабинетов 
-                до крупных корпоративных штаб-квартир.
+              <p className="text-[#F5F3EF]/45 text-base leading-relaxed mb-5">
+                С 2009 года оснащаем офисы российских компаний — от стартапов до федеральных корпораций. Собственное производство позволяет держать цены без компромисса по качеству.
               </p>
-              <p className="text-gray-500 text-base leading-relaxed">
-                Наши предметы мебели изготавливаются из высококачественных материалов. 
-                Готовы изготовить мебель по индивидуальным размерам и требованиям. 
-                Гарантируем качество и доступную цену.
+              <p className="text-[#F5F3EF]/45 text-base leading-relaxed mb-10">
+                Каждый проект начинается с обмера и заканчивается сдачей под ключ. Личный менеджер ведёт вас от первого звонка до подписания акта.
               </p>
+              <div className="w-full h-px bg-[#F5F3EF]/10 mb-8 anim-line" />
+              <a href="#contact" className="inline-flex items-center gap-3 text-[#D4A96A] text-xs uppercase tracking-widest hover:gap-5 transition-all duration-300">
+                Обсудить проект <Icon name="ArrowRight" size={13} />
+              </a>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {advantages.map((adv, i) => (
-                <div key={i} className="p-5 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all"
-                  style={{ backgroundColor: "hsl(210,20%,98%)" }}>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3"
-                    style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                    <Icon name={adv.icon} fallback="Check" size={20} className="text-white" />
-                  </div>
-                  <h4 className="font-semibold text-sm mb-1"
-                    style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-                    {adv.title}
-                  </h4>
-                  <p className="text-gray-500 text-xs leading-relaxed">{adv.desc}</p>
-                </div>
-              ))}
+            <div className="relative">
+              <img src={OFFICE_IMG} alt="Офис" className="w-full object-cover" style={{ aspectRatio: "4/5" }} />
+              <div className="absolute -bottom-5 -left-5 bg-[#D4A96A] px-6 py-5 hidden md:block">
+                <div className="text-[#1C1915] font-bold" style={{ fontFamily: "'Cormorant', serif", fontWeight: 700, fontSize: "2.5rem", lineHeight: 1 }}>18</div>
+                <div className="text-[#1C1915]/60 text-[10px] uppercase tracking-wider mt-1">мес. гарантия</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── DELIVERY STEPS ── */}
-      <section id="delivery" className="py-20" style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <div className="w-10 h-1 rounded mx-auto mb-4" style={{ backgroundColor: "hsl(28,85%,52%)" }} />
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3"
-              style={{ fontFamily: "'Montserrat', sans-serif" }}>
+      {/* ADVANTAGES */}
+      <section ref={advSection.ref} className="py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-8 md:px-12">
+          <div className="mb-14">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#1C1915]/35 mb-4">Преимущества</p>
+            <h2 className="leading-none" style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "clamp(2.2rem, 5vw, 3.8rem)", color: "#1C1915" }}>
+              Почему ГлавОфис
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#1C1915]/6">
+            {advantages.map((adv, i) => (
+              <div key={i}
+                className={`bg-[#F5F3EF] p-10 group hover:bg-[#1C1915] transition-all duration-500 border border-[#1C1915]/6 ${advSection.inView ? `anim-fadeup anim-delay-${i + 1}` : "opacity-0"}`}>
+                <div className="text-[#1C1915]/10 group-hover:text-[#D4A96A]/25 text-6xl font-bold mb-5 transition-colors duration-500"
+                  style={{ fontFamily: "'Cormorant', serif", fontWeight: 700, lineHeight: 1 }}>
+                  {adv.num}
+                </div>
+                <h4 className="text-[#1C1915] group-hover:text-[#F5F3EF] text-xl mb-3 whitespace-pre-line transition-colors duration-500"
+                  style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, lineHeight: 1.15 }}>
+                  {adv.title}
+                </h4>
+                <p className="text-[#1C1915]/45 group-hover:text-[#F5F3EF]/45 text-sm leading-relaxed transition-colors duration-500">
+                  {adv.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS */}
+      <section id="process" ref={processSection.ref} className="py-24 md:py-32 bg-[#EDEBE5]">
+        <div className="max-w-6xl mx-auto px-8 md:px-12">
+          <div className="mb-16">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#1C1915]/35 mb-4">Процесс</p>
+            <h2 className="leading-none" style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "clamp(2.2rem, 5vw, 3.8rem)", color: "#1C1915" }}>
               Как мы работаем
             </h2>
-            <p className="text-blue-200 text-lg">Простой и прозрачный процесс — от заявки до готового офиса</p>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {deliverySteps.map((step, i) => (
-              <div key={i} className="relative">
-                {i < deliverySteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-8 left-full w-full h-px z-0"
-                    style={{ background: "linear-gradient(to right, rgba(255,255,255,0.3), transparent)" }} />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-6">
+            {process.map((p, i) => (
+              <div key={i} className={`relative ${processSection.inView ? `anim-fadeup anim-delay-${i + 1}` : "opacity-0"}`}>
+                {i < process.length - 1 && (
+                  <div className="hidden md:block absolute top-4 left-full w-full h-px bg-[#1C1915]/12 z-0" />
                 )}
-                <div className="relative z-10 p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
-                  <div className="text-5xl font-bold mb-4 leading-none"
-                    style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(28,85%,52%)", opacity: 0.8 }}>
-                    {step.num}
+                <div className="relative z-10">
+                  <div className="text-[#D4A96A] mb-4 uppercase tracking-widest"
+                    style={{ fontFamily: "'Cormorant', serif", fontSize: "1.1rem", fontWeight: 600 }}>
+                    {p.step}
                   </div>
-                  <h4 className="text-white font-semibold text-lg mb-2"
-                    style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                    {step.title}
+                  <div className="w-8 h-px bg-[#1C1915]/18 mb-5" />
+                  <h4 className="text-[#1C1915] mb-3" style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "1.25rem" }}>
+                    {p.title}
                   </h4>
-                  <p className="text-blue-200 text-sm leading-relaxed">{step.desc}</p>
+                  <p className="text-[#1C1915]/45 text-sm leading-relaxed">{p.desc}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10 text-center">
-            <a href="#contacts"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded font-medium text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: "hsl(28,85%,52%)", fontFamily: "'Montserrat', sans-serif", fontWeight: 600 }}>
-              <Icon name="ArrowRight" size={18} />
-              Оставить заявку
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROJECTS ── */}
-      <section id="projects" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <div className="w-10 h-1 rounded mx-auto mb-4" style={{ backgroundColor: "hsl(28,85%,52%)" }} />
-            <h2 className="text-3xl md:text-4xl font-bold mb-3"
-              style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-              Наши клиенты
-            </h2>
-            <p className="text-gray-500 text-lg">Оснащаем офисы в различных отраслях бизнеса</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {projects.map((p, i) => (
-              <div key={i}
-                className="flex flex-col items-center text-center p-5 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all cursor-default"
-                style={{ backgroundColor: "hsl(210,20%,98%)" }}>
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-                  style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                  <Icon name={p.icon} fallback="Building" size={22} className="text-white" />
-                </div>
-                <span className="text-sm font-medium text-gray-700"
-                  style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                  {p.label}
-                </span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CONTACT FORM ── */}
-      <section id="contacts" className="py-20" style={{ backgroundColor: "hsl(210,20%,97%)" }}>
-        <div className="max-w-7xl mx-auto px-6">
+      {/* CONTACT */}
+      <section id="contact" ref={formSection.ref} className="py-24 md:py-32 bg-[#1C1915]">
+        <div className="max-w-6xl mx-auto px-8 md:px-12">
           <div className="grid md:grid-cols-2 gap-16 items-start">
-            <div>
-              <div className="w-10 h-1 rounded mb-4" style={{ backgroundColor: "hsl(28,85%,52%)" }} />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4"
-                style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-                Свяжитесь с нами
+            <div className={formSection.inView ? "anim-fadeup anim-delay-1" : "opacity-0"}>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-[#F5F3EF]/25 mb-6">Контакты</p>
+              <h2 className="text-[#F5F3EF] leading-tight mb-8"
+                style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "clamp(2rem, 4vw, 3.2rem)" }}>
+                Начнём работу<br />
+                <em style={{ color: "#D4A96A", fontStyle: "italic" }}>вместе</em>
               </h2>
-              <p className="text-gray-500 text-base mb-8 leading-relaxed">
-                Оставьте заявку — менеджер перезвонит в течение 30 минут 
-                и поможет подобрать мебель под ваши задачи и бюджет.
+              <p className="text-[#F5F3EF]/40 text-base leading-relaxed mb-12">
+                Оставьте заявку — в течение 30 минут с вами свяжется персональный менеджер и предложит оптимальное решение.
               </p>
-
-              <div className="space-y-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                    <Icon name="Phone" size={18} className="text-white" />
+              <div className="space-y-7">
+                {[
+                  { icon: "Phone", label: "Телефон", main: "+7 (495) 374-44-81", sub: "8 (800) 707-33-71 — бесплатно", href: "tel:+74953744481" },
+                  { icon: "Mail", label: "Email", main: "info@glavoffice.ru", sub: "", href: "mailto:info@glavoffice.ru" },
+                  { icon: "Clock", label: "Режим работы", main: "Пн–Пт: 9:00–19:00", sub: "Сб: 10:00–16:00", href: "" },
+                ].map((c, i) => (
+                  <div key={i} className="flex items-start gap-5">
+                    <div className="w-10 h-10 border border-[#F5F3EF]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon name={c.icon} fallback="Info" size={15} className="text-[#D4A96A]" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-[#F5F3EF]/25 uppercase tracking-widest mb-1">{c.label}</div>
+                      {c.href ? (
+                        <a href={c.href} className="text-[#F5F3EF] hover:text-[#D4A96A] transition-colors text-sm">{c.main}</a>
+                      ) : (
+                        <div className="text-[#F5F3EF] text-sm">{c.main}</div>
+                      )}
+                      {c.sub && <div className="text-[#F5F3EF]/30 text-xs mt-0.5">{c.sub}</div>}
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Телефоны</div>
-                    {contacts.phones.map((p) => (
-                      <a key={p} href={`tel:${p.replace(/\s|\(|\)|-/g, "")}`}
-                        className="block font-semibold hover:opacity-80 transition-opacity"
-                        style={{ color: "hsl(216,60%,22%)", fontFamily: "'Montserrat', sans-serif" }}>
-                        {p}
-                      </a>
-                    ))}
-                    <div className="text-xs text-gray-400 mt-1">8 (800) — бесплатно по России</div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                    <Icon name="Mail" size={18} className="text-white" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Email</div>
-                    <a href="mailto:info@glavoffice.ru"
-                      className="font-medium hover:opacity-80 transition-opacity"
-                      style={{ color: "hsl(216,60%,22%)" }}>
-                      {contacts.email}
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                    <Icon name="MapPin" size={18} className="text-white" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Адрес</div>
-                    <div className="text-gray-700 text-sm">г. Москва — шоурум и склад</div>
-                    <div className="text-gray-500 text-xs mt-0.5">Уточните адрес по телефону</div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                    <Icon name="Clock" size={18} className="text-white" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Режим работы</div>
-                    <div className="text-gray-700 text-sm">{contacts.hours}</div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              {sent ? (
-                <div className="text-center py-10">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                    style={{ backgroundColor: "hsl(216,60%,22%)" }}>
-                    <Icon name="CheckCheck" size={30} className="text-white" />
+            <div className={formSection.inView ? "anim-fadeup anim-delay-3" : "opacity-0"}>
+              <div className="border border-[#F5F3EF]/10 p-8 md:p-10">
+                {sent ? (
+                  <div className="text-center py-12">
+                    <div className="text-[#D4A96A] mb-4" style={{ fontFamily: "'Cormorant', serif", fontSize: "4rem" }}>✓</div>
+                    <h3 className="text-[#F5F3EF] text-2xl mb-3" style={{ fontFamily: "'Cormorant', serif", fontWeight: 600 }}>
+                      Заявка получена
+                    </h3>
+                    <p className="text-[#F5F3EF]/35 text-sm">Менеджер перезвонит в течение 30 минут</p>
                   </div>
-                  <h3 className="text-xl font-bold mb-2"
-                    style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-                    Заявка отправлена!
-                  </h3>
-                  <p className="text-gray-500">Мы перезвоним вам в течение 30 минут</p>
-                </div>
-              ) : (
-                <>
-                  <h3 className="text-xl font-bold mb-1"
-                    style={{ fontFamily: "'Montserrat', sans-serif", color: "hsl(216,60%,22%)" }}>
-                    Оставить заявку
-                  </h3>
-                  <p className="text-gray-500 text-sm mb-6">Перезвоним и поможем с выбором</p>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
-                        Ваше имя
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Иван Петров"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm outline-none focus:ring-2 transition-all"
-                        style={{ focusRingColor: "hsl(216,60%,22%)" }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
-                        Телефон *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="+7 (___) ___-__-__"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm outline-none focus:ring-2 transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
-                        Комментарий
-                      </label>
-                      <textarea
-                        rows={3}
-                        placeholder="Расскажите о задаче — размер офиса, нужные категории мебели..."
-                        value={formData.comment}
-                        onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm outline-none focus:ring-2 transition-all resize-none"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full py-3.5 rounded-lg text-white font-semibold transition-all hover:opacity-90 active:scale-[0.99]"
-                      style={{ backgroundColor: "hsl(216,60%,22%)", fontFamily: "'Montserrat', sans-serif" }}>
-                      Отправить заявку
-                    </button>
-                    <p className="text-center text-gray-400 text-xs">
-                      Нажимая кнопку, вы соглашаетесь с{" "}
-                      <a href="#" className="underline hover:text-gray-600">политикой обработки данных</a>
-                    </p>
-                  </form>
-                </>
-              )}
+                ) : (
+                  <>
+                    <h3 className="text-[#F5F3EF] mb-1" style={{ fontFamily: "'Cormorant', serif", fontWeight: 600, fontSize: "1.7rem" }}>
+                      Оставить заявку
+                    </h3>
+                    <p className="text-[#F5F3EF]/30 text-sm mb-8">Расскажите о задаче — подберём решение</p>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      {[
+                        { label: "Имя", key: "name", placeholder: "Иван Петров", type: "text", required: false },
+                        { label: "Телефон *", key: "phone", placeholder: "+7 (___) ___-__-__", type: "tel", required: true },
+                        { label: "Задача", key: "goal", placeholder: "Оснастить офис 20 рабочих мест", type: "text", required: false },
+                      ].map((f) => (
+                        <div key={f.key}>
+                          <label className="block text-[10px] text-[#F5F3EF]/35 uppercase tracking-widest mb-2">{f.label}</label>
+                          <input
+                            type={f.type}
+                            required={f.required}
+                            placeholder={f.placeholder}
+                            value={form[f.key as keyof typeof form]}
+                            onChange={e => setForm({ ...form, [f.key]: e.target.value })}
+                            className="w-full bg-transparent border-b border-[#F5F3EF]/12 text-[#F5F3EF] placeholder-[#F5F3EF]/18 py-3 text-sm outline-none focus:border-[#D4A96A] transition-colors"
+                          />
+                        </div>
+                      ))}
+                      <div className="pt-3">
+                        <button type="submit"
+                          className="w-full py-4 bg-[#D4A96A] text-[#1C1915] text-[11px] uppercase tracking-[0.15em] font-semibold hover:bg-[#F5F3EF] transition-colors duration-300">
+                          Отправить заявку
+                        </button>
+                      </div>
+                      <p className="text-center text-[#F5F3EF]/18 text-[11px]">
+                        Нажимая, вы соглашаетесь с{" "}
+                        <a href="#" className="underline hover:text-[#F5F3EF]/40 transition-colors">политикой конфиденциальности</a>
+                      </p>
+                    </form>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ backgroundColor: "hsl(216,65%,14%)" }}>
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded flex items-center justify-center bg-white/10">
-                  <Icon name="Building2" size={20} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-bold text-xl text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                    ГлавОфис
-                  </div>
-                  <div className="text-blue-300 text-xs">офисная мебель</div>
-                </div>
-              </div>
-              <p className="text-blue-200 text-sm leading-relaxed max-w-sm">
-                Производство и продажа офисной мебели. Доставка по Москве и всей России. 
-                Более 15 лет на рынке.
-              </p>
+      {/* FOOTER */}
+      <footer className="bg-[#111009] py-10">
+        <div className="max-w-6xl mx-auto px-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 bg-[#D4A96A] flex items-center justify-center">
+              <span className="text-[#1C1915] text-[9px] font-bold">ГО</span>
             </div>
-
-            <div>
-              <div className="text-white font-semibold mb-4 text-sm uppercase tracking-wide"
-                style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                Каталог
-              </div>
-              <ul className="space-y-2">
-                {categories.slice(0, 5).map((c) => (
-                  <li key={c.title}>
-                    <a href="#catalog" className="text-blue-300 text-sm hover:text-white transition-colors">
-                      {c.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <div className="text-white font-semibold mb-4 text-sm uppercase tracking-wide"
-                style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                Контакты
-              </div>
-              <ul className="space-y-2">
-                {contacts.phones.map((p) => (
-                  <li key={p}>
-                    <a href={`tel:${p.replace(/\s|\(|\)|-/g, "")}`}
-                      className="text-blue-300 text-sm hover:text-white transition-colors flex items-center gap-2">
-                      <Icon name="Phone" size={13} />
-                      {p}
-                    </a>
-                  </li>
-                ))}
-                <li>
-                  <a href="mailto:info@glavoffice.ru"
-                    className="text-blue-300 text-sm hover:text-white transition-colors flex items-center gap-2">
-                    <Icon name="Mail" size={13} />
-                    {contacts.email}
-                  </a>
-                </li>
-                <li className="text-blue-300 text-sm flex items-center gap-2 mt-3">
-                  <Icon name="Clock" size={13} />
-                  Пн–Пт 9:00–19:00
-                </li>
-              </ul>
-            </div>
+            <span className="text-[#F5F3EF]/35 text-xs uppercase tracking-widest">ГлавОфис · Офисная мебель</span>
           </div>
-
-          <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
-            <p className="text-blue-400 text-sm">
-              © 2009–2026 ГлавОфис. Все права защищены.
-            </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-blue-400 text-sm hover:text-white transition-colors">
-                Политика конфиденциальности
-              </a>
-              <a href="#" className="text-blue-400 text-sm hover:text-white transition-colors">
-                Оферта
-              </a>
-            </div>
+          <p className="text-[#F5F3EF]/18 text-xs">© 2009–2026 ГлавОфис. Все права защищены.</p>
+          <div className="flex gap-6">
+            <a href="#" className="text-[#F5F3EF]/18 text-xs hover:text-[#F5F3EF]/45 transition-colors uppercase tracking-wider">Политика</a>
+            <a href="#" className="text-[#F5F3EF]/18 text-xs hover:text-[#F5F3EF]/45 transition-colors uppercase tracking-wider">Оферта</a>
           </div>
         </div>
       </footer>
